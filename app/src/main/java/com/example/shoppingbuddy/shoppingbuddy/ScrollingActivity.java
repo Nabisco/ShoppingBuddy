@@ -11,12 +11,45 @@ import android.view.MenuItem;
 
 public class ScrollingActivity extends AppCompatActivity {
 
+    public ScrollingActivity() {
+
+
+
+
+
+
+
+    }
+
+
+    public void populateList() {
+
+        ShoppingList theList = new ShoppingList();
+        ListItem apples = new ListItem("Apples", 2.50, 1);
+        ListItem hurricane = new ListItem("Hurricane High Gravity", 3.50, 3);
+        ListItem Milk = new ListItem("Milk", 1.50, 3);
+        ListItem Eggs = new ListItem("Eggs", 1.00, 4);
+        ListItem Water = new ListItem("Case of Water", 5.99, 1);
+
+        theList.addItemToList(apples);
+        theList.addItemToList(Eggs);
+        theList.addItemToList(Milk);
+        theList.addItemToList(Water);
+        theList.addItemToList(hurricane);
+
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        populateList();
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
