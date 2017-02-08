@@ -10,28 +10,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.shoppingbuddy.shoppingbuddy.MainActivity">
 
-    <Button
-        android:text="New List"
+    <ListView
+        android:id="@+id/list_todo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/newListBtn" />
+        />
 
-    <Button
-        android:text="Old Lists"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/newListBtn"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/oldListsBtn" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:id="@+id/textView"
-        android:layout_alignParentEnd="true"
-        tools:layout_height="match_parent"
-        android:layout_above="@+id/newListBtn" />
 </RelativeLayout>
