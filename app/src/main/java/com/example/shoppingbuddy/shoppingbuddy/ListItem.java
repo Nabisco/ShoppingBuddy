@@ -11,11 +11,11 @@ public class ListItem {
     private int i_itemAisle;
 
 
-    public ListItem(String itemName, double itemPrice, int itemAisle) {
+    public ListItem(String itemName) {
 
         this.s_itemName = itemName;
-        this.d_itemPrice = itemPrice;
-        this.i_itemAisle = itemAisle;
+        this.d_itemPrice = 0.00;
+        this.i_itemAisle = 0;
 
     }
 

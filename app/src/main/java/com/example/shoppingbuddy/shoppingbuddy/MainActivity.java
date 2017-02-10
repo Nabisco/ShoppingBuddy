@@ -24,10 +24,10 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String TAG = "MainActivity";
-    private TaskDbHelper mHelper;
-    private ListView mTaskListView;
-    private ArrayAdapter<String> mAdapter;
+    private String TAG = "MainActivity";    //For debugging purposes
+    private TaskDbHelper mHelper;           //Database helper class
+    private ListView mTaskListView;         //ListView for main activity screen
+    private ArrayAdapter<String> mAdapter;  //List of list items
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
