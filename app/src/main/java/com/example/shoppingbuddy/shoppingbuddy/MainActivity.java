@@ -27,15 +27,18 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";    //For debugging purposes
     private TaskDbHelper mHelper;           //Database helper class
     private ListView mTaskListView;         //ListView for main activity screen
-    private ArrayAdapter<String> mAdapter;  //List of list items
+    private ArrayAdapter<String> mAdapter;  //Adapter to add list items to listview
+    ArrayList<ListItem> currentList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_sb);
+
         mTaskListView = (ListView) findViewById(R.id.list_todo);
         mHelper = new TaskDbHelper(this);
-
+        currentList = new ArrayList<>();
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String task = String.valueOf(taskEditText.getText());
+
                                 SQLiteDatabase db = mHelper.getWritableDatabase();
                                 ContentValues values = new ContentValues();
                                 values.put(TaskContract.TaskEntry.COL_TASK_TITLE, task);
@@ -80,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
                                 db.close();
                                 updateUI();
                                 Log.d(TAG, "Task to add: " + task);
+                                ListItem newItem = new ListItem(task);
+                                currentList.add(newItem);
                             }
                         })
                         .setNegativeButton("Cancel", null)
