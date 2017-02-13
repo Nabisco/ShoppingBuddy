@@ -12,20 +12,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.shoppingbuddy.shoppingbuddy.db.TaskContract;
-import com.example.shoppingbuddy.shoppingbuddy.db.TaskDbHelper;
+import com.example.shoppingbuddy.shoppingbuddy.db.ItemContract;
+import com.example.shoppingbuddy.shoppingbuddy.db.ItemDbHelper;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = "MainActivity";    //For debugging purposes
-    private TaskDbHelper mHelper;           //Database helper class
+    private ItemDbHelper mHelper;           //Database helper class
     private ListView mTaskListView;         //ListView for main activity screen
     private ArrayAdapter<String> mAdapter;  //Adapter to add list items to listview
     ArrayList<ListItem> currentList;
@@ -37,20 +36,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_sb);
 
         mTaskListView = (ListView) findViewById(R.id.list_todo);
-        mHelper = new TaskDbHelper(this);
+        mHelper = new ItemDbHelper(this);
+
         currentList = new ArrayList<>();
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
-                new String[]{TaskContract.TaskEntry._ID, TaskContract.TaskEntry.COL_TASK_TITLE},
+        //mHelper.createTable(db);
+
+        Cursor cursor = db.query(ItemContract.ItemEntry.TABLE,
+                new String[]{ItemContract.ItemEntry._ID, ItemContract.ItemEntry.COL_ITEM_NAME},
                 null, null, null, null, null);
+
         while(cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_TITLE);
-            Log.d(TAG, "Task: " + cursor.getString(idx));
+            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.COL_ITEM_NAME);
+            Log.d(TAG, "Item: " + cursor.getString(idx));
         }
+
         cursor.close();
         db.close();
-
         updateUI();
     }
 
@@ -66,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add_task:
                 final EditText taskEditText = new EditText(this);
                 AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("Add a new task")
-                        .setMessage("What do you want to do next?")
+                        .setTitle("Add a new item")
+                        .setMessage("What do you want to add?")
                         .setView(taskEditText)
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             @Override
@@ -76,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
                                 SQLiteDatabase db = mHelper.getWritableDatabase();
                                 ContentValues values = new ContentValues();
-                                values.put(TaskContract.TaskEntry.COL_TASK_TITLE, task);
-                                db.insertWithOnConflict(TaskContract.TaskEntry.TABLE,
+                                values.put(ItemContract.ItemEntry.COL_ITEM_NAME, task);
+                                db.insertWithOnConflict(ItemContract.ItemEntry.TABLE,
                                         null,
                                         values,
                                         SQLiteDatabase.CONFLICT_REPLACE);
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton("Cancel", null)
                         .create();
                 dialog.show();
-                Log.d(TAG, "Add a new task");
+                Log.d(TAG, "Add a new item");
                 return true;
 
             default:
@@ -100,24 +103,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initComponents() {
-        mHelper = new TaskDbHelper(this);
+        mHelper = new ItemDbHelper(this);
     }
 
     private void updateUI() {
         ArrayList<String> taskList = new ArrayList<>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
-                new String[]{TaskContract.TaskEntry._ID, TaskContract.TaskEntry.COL_TASK_TITLE},
+        Cursor cursor = db.query(ItemContract.ItemEntry.TABLE,
+                new String[]{ItemContract.ItemEntry._ID, ItemContract.ItemEntry.COL_ITEM_NAME},
                 null, null, null, null, null);
         while (cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_TITLE);
+            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.COL_ITEM_NAME);
             taskList.add(cursor.getString(idx));
         }
 
         if (mAdapter == null) {
             mAdapter = new ArrayAdapter<>(this,
                     R.layout.item_todo,
-                    R.id.task_title,
+                    R.id.item_title,
                     taskList);
             mTaskListView.setAdapter(mAdapter);
         } else {
@@ -130,13 +133,13 @@ public class MainActivity extends AppCompatActivity {
         db.close();
     }
 
-    public void deleteTask(View view) {
+    public void deleteItem(View view) {
         View parent = (View) view.getParent();
-        TextView taskTextView = (TextView) parent.findViewById(R.id.task_title);
+        TextView taskTextView = (TextView) parent.findViewById(R.id.item_title);
         String task = String.valueOf(taskTextView.getText());
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        db.delete(TaskContract.TaskEntry.TABLE,
-                TaskContract.TaskEntry.COL_TASK_TITLE + " = ?",
+        db.delete(ItemContract.ItemEntry.TABLE,
+                ItemContract.ItemEntry.COL_ITEM_NAME + " = ?",
                 new String[]{task});
         db.close();
         updateUI();
