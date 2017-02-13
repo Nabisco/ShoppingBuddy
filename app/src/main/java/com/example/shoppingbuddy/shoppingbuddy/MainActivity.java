@@ -107,25 +107,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        ArrayList<String> taskList = new ArrayList<>();
+        ArrayList<String>itemList = new ArrayList<>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(ItemContract.ItemEntry.TABLE,
                 new String[]{ItemContract.ItemEntry._ID, ItemContract.ItemEntry.COL_ITEM_NAME},
                 null, null, null, null, null);
         while (cursor.moveToNext()) {
             int idx = cursor.getColumnIndex(ItemContract.ItemEntry.COL_ITEM_NAME);
-            taskList.add(cursor.getString(idx));
+            itemList.add(cursor.getString(idx));
         }
 
         if (mAdapter == null) {
             mAdapter = new ArrayAdapter<>(this,
                     R.layout.item_todo,
                     R.id.item_title,
-                    taskList);
+                    itemList);
             mTaskListView.setAdapter(mAdapter);
         } else {
             mAdapter.clear();
-            mAdapter.addAll(taskList);
+            mAdapter.addAll(itemList);
             mAdapter.notifyDataSetChanged();
         }
 
