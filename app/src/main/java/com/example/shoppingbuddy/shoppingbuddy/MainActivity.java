@@ -146,9 +146,8 @@ public class MainActivity extends AppCompatActivity {
         for(ListItem x : currentList) {
             if(x.getS_itemName().equalsIgnoreCase(task)) {
                 if(x.getI_itemAisle() == 0 && x.getD_itemPrice() == 0.0) {
-                    currentList.set(currentList.indexOf(x), priceAndAisleCheck(x));
+                    priceAndAisleCheck(x);
                     Log.d("MainActivity", x.getS_itemName() + " Aisle: " + x.getI_itemAisle());
-                    updateUI();
                 } else {
                     currentList.remove(x);
                     updateUI();
