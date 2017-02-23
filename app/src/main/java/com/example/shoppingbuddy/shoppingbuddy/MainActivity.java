@@ -1,14 +1,21 @@
 package com.example.shoppingbuddy.shoppingbuddy;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -138,7 +145,14 @@ public class MainActivity extends AppCompatActivity {
         String task = String.valueOf(taskTextView.getText());
         for(ListItem x : currentList) {
             if(x.getS_itemName().equalsIgnoreCase(task)) {
-                currentList.remove(x);
+                if(x.getI_itemAisle() == 0 && x.getD_itemPrice() == 0.0) {
+                    currentList.set(currentList.indexOf(x), priceAndAisleCheck(x));
+                    Log.d("MainActivity", x.getS_itemName() + " Aisle: " + x.getI_itemAisle());
+                    updateUI();
+                } else {
+                    currentList.remove(x);
+                    updateUI();
+                }
                 break;
             }
         }
@@ -150,4 +164,93 @@ public class MainActivity extends AppCompatActivity {
         updateUI();
     }
 
-}
+    public ListItem priceAndAisleCheck(ListItem itemToChange) {
+            final ListItem updatedItem = itemToChange;
+            View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(final View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        // Must use message queue to show keyboard
+                        v.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                InputMethodManager inputMethodManager= (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                inputMethodManager.showSoftInput(v, 0);
+                            }
+                        });
+                    }
+                }
+            };
+
+            final EditText editTextAisle = new EditText(this);
+            editTextAisle.setHint("Aisle");
+            editTextAisle.setInputType(InputType.TYPE_CLASS_NUMBER);
+            editTextAisle.setFocusable(true);
+            editTextAisle.setClickable(true);
+            editTextAisle.setFocusableInTouchMode(true);
+            editTextAisle.setSelectAllOnFocus(true);
+            editTextAisle.setSingleLine(true);
+            editTextAisle.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+            editTextAisle.setOnFocusChangeListener(onFocusChangeListener);
+
+            final EditText editTextPrice = new EditText(this);
+            editTextPrice.setHint("Price");
+            editTextPrice.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            editTextPrice.setFocusable(true);
+            editTextPrice.setClickable(true);
+            editTextPrice.setFocusableInTouchMode(true);
+            editTextPrice.setSelectAllOnFocus(true);
+            editTextPrice.setSingleLine(true);
+            editTextPrice.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            editTextPrice.setOnFocusChangeListener(onFocusChangeListener);
+
+            LinearLayout linearLayout = new LinearLayout(this);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            linearLayout.addView(editTextAisle);
+            linearLayout.addView(editTextPrice);
+
+            DialogInterface.OnClickListener alertDialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            int newAisle = Integer.parseInt(editTextAisle.getText().toString());
+                            double newPrice = Double.parseDouble(editTextPrice.getText().toString());
+                            updatedItem.setD_itemPrice(newPrice);
+                            updatedItem.setI_itemAisle(newAisle);
+                            updateUI();
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            // Cancel button clicked
+                            break;
+                    }
+                }
+            };
+            final AlertDialog alertDialog = (new AlertDialog.Builder(this)).setMessage("Please enter name and password")
+                    .setView(linearLayout)
+                    .setPositiveButton("Done", alertDialogClickListener)
+                    .setNegativeButton("Cancel", alertDialogClickListener)
+                    .create();
+
+            editTextAisle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    editTextPrice.requestFocus(); // Press Return to focus next one
+                    return false;
+                }
+            });
+            editTextPrice.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    // Press Return to invoke positive button on alertDialog.
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+                    return false;
+                }
+            });
+
+            alertDialog.show();
+            return updatedItem;
+        }
+    }
+
+
