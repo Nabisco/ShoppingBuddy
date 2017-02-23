@@ -16,13 +16,12 @@ public class ItemContract {
         public static final String SHOPPINGLIST = "ShoppingList";
         public static final String SL_COL_LIST_ID = "List_ID";
         public static final String SL_COL_DATE = "Date";
-        public static final String SL_COL_NUMBERS = "Numbers_ID";
+        public static final String SL_COL_NUMBERS = "LinkTable_ID";
 
         //TODO implement link table
-        public static final String NUMBERS = "Numbers";
-        public static final String N_COL_NUM_ID = "Numbers_ID";
-        public static final String N_COL_LIST_ID = "List ID";
-        public static final String SL_COL_ITEM_ID = "Item_ID";
+        public static final String LINKTABLE = "LinkTable";
+        public static final String LT_COL_LIST_ID = "List_ID";
+        public static final String LT_COL_ITEM_ID = "Item_ID";
 
         //TODO implement full list item table
         public static final String LISTITEM = "ListItem";
@@ -34,8 +33,8 @@ public class ItemContract {
         //Code for temp table used to store data for sprint 1
         //Will implement the full datat structure durring next sprint
         //This is all that is required to test functioality and complete sprint 1
-        public static final String TABLE = "List";
-        public static final String COL_ITEM_NAME = "Name";
+//        public static final String TABLE = "List";
+//        public static final String COL_ITEM_NAME = "Name";
 
 
     }

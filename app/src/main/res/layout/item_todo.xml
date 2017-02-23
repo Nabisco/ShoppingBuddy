@@ -19,11 +19,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Done"
+        android:text="Item Grabbed"
         android:onClick="deleteItem"/>
 
     <TextView
-        android:text="Aisle"
+        android:text="Aisle  "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/item_title"
@@ -39,7 +39,7 @@
         android:paddingEnd="25dp" />
 
     <TextView
-        android:text="$"
+        android:text="$  "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_price_label"

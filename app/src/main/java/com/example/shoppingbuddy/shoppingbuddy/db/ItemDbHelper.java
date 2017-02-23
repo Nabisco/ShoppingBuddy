@@ -18,47 +18,89 @@ public class ItemDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String createTable = "CREATE TABLE " + ItemContract.ItemEntry.TABLE + " ( " +
-                ItemContract.ItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ItemContract.ItemEntry.COL_ITEM_NAME + " TEXT NOT NULL);";
-
-        db.execSQL(createTable);
+//        String createTable = "CREATE TABLE " + ItemContract.ItemEntry.TABLE + " ( " +
+//                ItemContract.ItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                ItemContract.ItemEntry.COL_ITEM_NAME + " TEXT NOT NULL);";
+//
+//        db.execSQL(createTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.TABLE);
+        //db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.TABLE);
         onCreate(db);
     }
 
     public void createTable(SQLiteDatabase db){
 
-        String createTable = "CREATE TABLE " + ItemContract.ItemEntry.TABLE + " ( " +
-                ItemContract.ItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ItemContract.ItemEntry.COL_ITEM_NAME + " TEXT NOT NULL);";
-        db.execSQL(createTable);
-    }
-}
+        //db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.SHOPPINGLIST);
+        db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.LISTITEM);
+        db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.LINKTABLE);
 
-/*
-String createSLTable = "CREATE TABLE " + ItemContract.ItemEntry.SHOPPINGLIST + " ( " +
+
+
+        String createSLTable = "CREATE TABLE " + ItemContract.ItemEntry.SHOPPINGLIST + " ( " +
                 ItemContract.ItemEntry.SL_COL_LIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ItemContract.ItemEntry.SL_COL_DATE + "CURRENT_DATE, " +
-                "FORIEGN KEY(" + ItemContract.ItemEntry.SL_COL_NUMBERS +") REFERENCES " + ItemContract.ItemEntry.NUMBERS +
-                "(" + ItemContract.ItemEntry.N_COL_NUM_ID + ")" +
+                ItemContract.ItemEntry.SL_COL_DATE + "CURRENT_DATE " +
                 ");";
 
 
         String createLITable = "CREATE TABLE " + ItemContract.ItemEntry.LISTITEM + " ( " +
                 ItemContract.ItemEntry.LI_COL_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ItemContract.ItemEntry.LI_COL_NAME + "NAME, " +
                 ItemContract.ItemEntry.LI_COL_AISLE + "INTEGER, " +
                 ItemContract.ItemEntry.LI_COL_PRICE + "DOUBLE" +
                 ");";
 
 
-        String createNUMTable = "CREATE TABLE " + ItemContract.ItemEntry.SHOPPINGLIST + " ( " +
-                ItemContract.ItemEntry.SL_COL_LIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ItemContract.ItemEntry.SL_COL_DATE + "CURRENT_DATE, " +
-                ItemContract.ItemEntry.SL_COL_NUMBERS + "FORIEGN KEY " +
+        String createLTTable = "CREATE TABLE " + ItemContract.ItemEntry.LINKTABLE + " ( " +
+                ItemContract.ItemEntry.SL_COL_LIST_ID + " INTEGER, " +
+                ItemContract.ItemEntry.LI_COL_ITEM_ID + " INTEGER, " +
+                "FOREIGN KEY(" + ItemContract.ItemEntry.SL_COL_LIST_ID +") REFERENCES " + ItemContract.ItemEntry.SHOPPINGLIST +
+                "(" + ItemContract.ItemEntry.SL_COL_LIST_ID+ "), " +
+                "FOREIGN KEY(" + ItemContract.ItemEntry.LT_COL_ITEM_ID +") REFERENCES " + ItemContract.ItemEntry.LISTITEM +
+                "(" + ItemContract.ItemEntry.LI_COL_ITEM_ID+ ")" +
                 ");";
+        db.execSQL(createSLTable);
+        db.execSQL(createLITable);
+        db.execSQL(createLTTable);
+    }
+}
+
+
+//        String createSLTable = "CREATE TABLE " + ItemContract.ItemEntry.SHOPPINGLIST + " ( " +
+//                ItemContract.ItemEntry.SL_COL_LIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                ItemContract.ItemEntry.SL_COL_DATE + "CURRENT_DATE, " +
+//                ");";
+//
+//
+//        String createLITable = "CREATE TABLE " + ItemContract.ItemEntry.LISTITEM + " ( " +
+//                ItemContract.ItemEntry.LI_COL_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                ItemContract.ItemEntry.LI_COL_NAME + "NAME, " +
+//                ItemContract.ItemEntry.LI_COL_AISLE + "INTEGER, " +
+//                ItemContract.ItemEntry.LI_COL_PRICE + "DOUBLE" +
+//                ");";
+//
+//
+//        String createNUMTable = "CREATE TABLE " + ItemContract.ItemEntry.LINKTABLE + " ( " +
+//                ItemContract.ItemEntry.SL_COL_LIST_ID + " INTEGER, " +
+//                ItemContract.ItemEntry.LI_COL_ITEM_ID + " INTEGER, " +
+//                "FOREIGN KEY(" + ItemContract.ItemEntry.SL_COL_LIST_ID +") REFERENCES " + ItemContract.ItemEntry.SHOPPINGLIST +
+//                "(" + ItemContract.ItemEntry.SL_COL_LIST_ID+ ")" +
+//                "FOREIGN KEY(" + ItemContract.ItemEntry.LT_COL_ITEM_ID +") REFERENCES " + ItemContract.ItemEntry.LISTITEM +
+//                "(" + ItemContract.ItemEntry.LI_COL_ITEM_ID+ ")" +
+//                ");";
+
+
+/*
+
+CREATE TABLE ShoppingList (List_ID INTEGER PRIMARY KEY AUTOINCREMENT, Date CURRENT_DATE);
+
+CREATE TABLE ListItem (Item_ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Aisle INTEGER, Price DOUBLE);
+
+CREATE TABLE LinkTable (List_ID INTEGER, Item_ID INTEGER,
+                       FOREIGN KEY(List_ID) REFERENCES ShoppingList(List_ID),
+                       FOREIGN KEY(Item_ID) REFERENCES ListItem(Item_ID));
+
  */
