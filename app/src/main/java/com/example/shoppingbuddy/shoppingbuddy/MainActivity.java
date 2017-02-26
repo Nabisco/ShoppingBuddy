@@ -1,12 +1,14 @@
 package com.example.shoppingbuddy.shoppingbuddy;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -21,7 +23,11 @@ import android.widget.TextView;
 
 import com.example.shoppingbuddy.shoppingbuddy.db.ItemDbHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,22 +35,61 @@ public class MainActivity extends AppCompatActivity {
     private ItemDbHelper mHelper;           //Database helper class
     private ListView mTaskListView;         //ListView for main activity screen
     private ItemAdapter mAdapter;  //Adapter to add list items to listview
-    ArrayList<ListItem> currentList;
+    ArrayList<ListItem> currentItemList;
+    HashMap<String, String[]> itemIndexFromDB;
+    ShoppingList theShoppingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_sb);
 
-        currentList = new ArrayList<>();
-        ArrayList<ListItem> itemList = currentList;
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = df.format(cal.getTime());
+
+        currentItemList = new ArrayList<>();
+        theShoppingList = new ShoppingList(currentItemList, formattedDate);
+        ArrayList<ListItem> itemList = currentItemList;
         mTaskListView = (ListView) findViewById(R.id.list_todo);
         mAdapter = new ItemAdapter(this, itemList);
         mTaskListView.setAdapter(mAdapter);
         mHelper = new ItemDbHelper(this);
+        itemIndexFromDB = new HashMap<>();
 
-//        SQLiteDatabase db = mHelper.getReadableDatabase();
-//        mHelper.createTable(db);
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        //mHelper.createTables(db);
+
+        ContentValues cv1 = new ContentValues();
+
+        cv1.put("Name", "Beer");
+        cv1.put("Aisle", "2");
+        cv1.put("Price", "10.99");
+        //db.insert("ListItem", null, cv1);
+        //Log.d("MainActivity", "values inserted");
+
+        String query = "SELECT Name, Aisle, Price FROM ListItem";
+        Cursor c = db.rawQuery(query, null);
+        while(c.moveToNext()) {
+            Log.d("MainActivity", "MoveToNext entered");
+            String name = c.getString(c.getColumnIndex("Name"));
+            String aisle = c.getString(c.getColumnIndex("Aisle"));
+            String price = c.getString(c.getColumnIndex("Price"));
+            String[] values = {aisle, price};
+            itemIndexFromDB.put(name, values);
+        }
+        if(itemIndexFromDB.size() > 0) {
+            Log.d("MainActivity", "Items in db at index 0: " + itemIndexFromDB.keySet().toArray()[0]);
+        } else {
+            Log.d("MainActivity", "ItemIndex size is: " + itemIndexFromDB.size());
+        }
+
+
+
+
+//        mHelper.createTables(db);
+
+
 //        Cursor cursor = db.query(ItemContract.ItemEntry.LISTITEM,
 //                new String[]{ItemContract.ItemEntry.LI_COL_NAME},
 //                null, null, null, null, null);
@@ -56,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
 //        cursor.close();
-//        db.close();
+        db.close();
         updateUI();
     }
 
@@ -91,9 +136,9 @@ public class MainActivity extends AppCompatActivity {
 //                                        SQLiteDatabase.CONFLICT_REPLACE);
 //                                db.close()
                                 ListItem newItem = new ListItem(task);
-                                Log.d(TAG, "Before adding new item. size: "  + currentList.size());
-                                currentList.add(newItem);
-                                Log.d(TAG, "added task to list. Size is now: " + currentList.size());
+                                Log.d(TAG, "Before adding new item. size: "  + currentItemList.size());
+                                currentItemList.add(newItem);
+                                Log.d(TAG, "added task to list. Size is now: " + currentItemList.size());
                                 //Log.d(TAG, "Task to add: " + task);
 
                                 updateUI();
@@ -103,10 +148,16 @@ public class MainActivity extends AppCompatActivity {
                         .create();
                 dialog.show();
                 return true;
-
+            case R.id.save_item:
+                //TODO: code to save to database
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void saveShoppingListToDB() {
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+
     }
 
     public void initComponents() {
@@ -123,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
 //            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.COL_ITEM_NAME);
 //            itemList.add(cursor.getString(idx));
 //        }
-        ArrayList<ListItem> itemList = currentList;
+        ArrayList<ListItem> itemList = currentItemList;
+        theShoppingList.setH_shoppingList(currentItemList);
 
         if (mAdapter == null) {
             mAdapter = new ItemAdapter(this, itemList);
@@ -133,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mAdapter.notifyDataSetChanged();
             Log.d("MainActivity", "UpdateUI add all executed");
-
         }
 //        cursor.close();
 //        db.close();
@@ -143,13 +194,13 @@ public class MainActivity extends AppCompatActivity {
         View parent = (View) view.getParent();
         TextView taskTextView = (TextView) parent.findViewById(R.id.item_title);
         String task = String.valueOf(taskTextView.getText());
-        for(ListItem x : currentList) {
+        for(ListItem x : currentItemList) {
             if(x.getS_itemName().equalsIgnoreCase(task)) {
                 if(x.getI_itemAisle() == 0 && x.getD_itemPrice() == 0.0) {
                     priceAndAisleCheck(x);
                     Log.d("MainActivity", x.getS_itemName() + " Aisle: " + x.getI_itemAisle());
                 } else {
-                    currentList.remove(x);
+                    currentItemList.remove(x);
                     updateUI();
                 }
                 break;

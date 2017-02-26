@@ -31,7 +31,7 @@ public class ItemDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void createTable(SQLiteDatabase db){
+    public void createTables(SQLiteDatabase db){
 
         //db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ItemContract.ItemEntry.SHOPPINGLIST);
@@ -42,15 +42,15 @@ public class ItemDbHelper extends SQLiteOpenHelper {
 
         String createSLTable = "CREATE TABLE " + ItemContract.ItemEntry.SHOPPINGLIST + " ( " +
                 ItemContract.ItemEntry.SL_COL_LIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ItemContract.ItemEntry.SL_COL_DATE + "CURRENT_DATE " +
+                ItemContract.ItemEntry.SL_COL_DATE + " TEXT" +
                 ");";
 
 
         String createLITable = "CREATE TABLE " + ItemContract.ItemEntry.LISTITEM + " ( " +
                 ItemContract.ItemEntry.LI_COL_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ItemContract.ItemEntry.LI_COL_NAME + "NAME, " +
-                ItemContract.ItemEntry.LI_COL_AISLE + "INTEGER, " +
-                ItemContract.ItemEntry.LI_COL_PRICE + "DOUBLE" +
+                ItemContract.ItemEntry.LI_COL_NAME + " TEXT, " +
+                ItemContract.ItemEntry.LI_COL_AISLE + " INTEGER, " +
+                ItemContract.ItemEntry.LI_COL_PRICE + " DOUBLE" +
                 ");";
 
 
