@@ -1,6 +1,7 @@
 package com.example.shoppingbuddy.shoppingbuddy;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,11 +12,13 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -28,6 +31,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import static android.R.id.list;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,38 +44,95 @@ public class MainActivity extends AppCompatActivity {
     private ItemAdapter mAdapter;  //Adapter to add list items to listview
     ArrayList<ListItem> currentItemList;
     HashMap<String, String[]> itemIndexFromDB;
+    int theListID;
+    String date;
+
     ShoppingList theShoppingList;
+    ArrayList<String> itemIDList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_sb);
 
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = df.format(cal.getTime());
+        Bundle b = getIntent().getExtras();
+        int value = -1; // or other values
+        if(b != null)
+            value = b.getInt("key");
 
+        itemIDList = new ArrayList<>();
         currentItemList = new ArrayList<>();
-        theShoppingList = new ShoppingList(currentItemList, formattedDate);
         ArrayList<ListItem> itemList = currentItemList;
         mTaskListView = (ListView) findViewById(R.id.list_todo);
         mAdapter = new ItemAdapter(this, itemList);
         mTaskListView.setAdapter(mAdapter);
         mHelper = new ItemDbHelper(this);
         itemIndexFromDB = new HashMap<>();
+        theListID = 0;
+        date = "";
+        switch(value) {
+            case 0:
+                createNewList();
+                break;
+            case 1:
+                displayPreviousList();
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void displayPreviousList() {
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        //mHelper.createTables(db);
+        String listID = "";
 
-        ContentValues cv1 = new ContentValues();
+        String maxQuery = "SELECT List_ID FROM ShoppingList";
+        Cursor cursor = db.rawQuery(maxQuery, null);
+        while (cursor.moveToNext()) {
+            listID = cursor.getString(cursor.getColumnIndex("List_ID"));
+            if(Integer.parseInt(listID) >= theListID) {
+                theListID = Integer.parseInt(listID);
+                Log.d(TAG, "Shopping List ID: " + listID);
+            }
+        }
+        Log.d(TAG, "Shopping List ID: " + listID);
+        cursor.close();
 
-        cv1.put("Name", "Beer");
-        cv1.put("Aisle", "2");
-        cv1.put("Price", "10.99");
-        //db.insert("ListItem", null, cv1);
-        //Log.d("MainActivity", "values inserted");
+        String dateQuery = "SELECT Date FROM ShoppingList WHERE List_ID = \"" + theListID + "\"";
+        Cursor cue = db.rawQuery(dateQuery, null);
+        while (cursor.moveToNext()) {
+            String theDate = cue.getString(cursor.getColumnIndex("Date"));
+            date = theDate;
+        }
+        theShoppingList = new ShoppingList(currentItemList, date);
+        theShoppingList.setListID(date);
+        cue.close();
 
-        String query = "SELECT Name, Aisle, Price FROM ListItem";
+
+
+
+        String query = "SELECT Name, Aisle, Price FROM ListItem LEFT JOIN LinkTable ON ListItem.Item_ID = LinkTable.Item_ID " +
+                "WHERE LinkTable.List_ID = \"" + theListID + "\"";
+        Cursor cur = db.rawQuery(query, null);
+        while(cur.moveToNext()) {
+            //Log.d("MainActivity", "MoveToNext entered");
+            String name = cur.getString(cur.getColumnIndex("Name"));
+            String aisle = cur.getString(cur.getColumnIndex("Aisle"));
+            String price = cur.getString(cur.getColumnIndex("Price"));
+            ListItem li = new ListItem(name);
+            li.setI_itemAisle(Integer.parseInt(aisle));
+            li.setD_itemPrice(Double.parseDouble(price));
+            currentItemList.add(li);
+        }
+        cur.close();
+
+        Log.d(TAG, "Current item list size: " + currentItemList.size());
+
+
+        query = "SELECT Name, Aisle, Price FROM ListItem";
         Cursor c = db.rawQuery(query, null);
         while(c.moveToNext()) {
             Log.d("MainActivity", "MoveToNext entered");
@@ -78,29 +142,64 @@ public class MainActivity extends AppCompatActivity {
             String[] values = {aisle, price};
             itemIndexFromDB.put(name, values);
         }
-        if(itemIndexFromDB.size() > 0) {
-            Log.d("MainActivity", "Items in db at index 0: " + itemIndexFromDB.keySet().toArray()[0]);
-        } else {
-            Log.d("MainActivity", "ItemIndex size is: " + itemIndexFromDB.size());
+
+        db.close();
+        updateUI();
+    }
+
+    private void createNewList() {
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = df.format(cal.getTime());
+
+        theShoppingList = new ShoppingList(currentItemList, formattedDate);
+
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        //mHelper.createTables(db);
+
+        ContentValues cv1 = new ContentValues();
+
+        cv1.put("Date", theShoppingList.getCurrentDate());
+
+        db.insert("ShoppingList", null, cv1);
+        String query = "SELECT List_ID FROM ShoppingList WHERE Date = \"" + theShoppingList.getCurrentDate() + "\"";
+        Cursor cursor = db.rawQuery(query, null);
+        while (cursor.moveToNext()) {
+            String listID = cursor.getString(cursor.getColumnIndex("List_ID"));
+            theShoppingList.setListID(listID);
+            Log.d(TAG, "Shopping List ID: " + listID);
+        }
+        cursor.close();
+
+        query = "SELECT Name, Aisle, Price FROM ListItem";
+        Cursor c = db.rawQuery(query, null);
+        while(c.moveToNext()) {
+            Log.d("MainActivity", "MoveToNext entered");
+            String name = c.getString(c.getColumnIndex("Name"));
+            String aisle = c.getString(c.getColumnIndex("Aisle"));
+            String price = c.getString(c.getColumnIndex("Price"));
+            String[] values = {aisle, price};
+            itemIndexFromDB.put(name, values);
+        }
+        Iterator it = itemIndexFromDB.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Log.d(TAG, pair.getKey().toString());
+
+        }
+        /*
+        mHelper.createTables(db);
+        Cursor cursor = db.query(ItemContract.ItemEntry.LISTITEM,
+                new String[]{ItemContract.ItemEntry.LI_COL_NAME},
+                null, null, null, null, null);
+        while(cursor.moveToNext()) {
+            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.LI_COL_NAME);
+            Log.d(TAG, "Item: " + cursor.getString(idx));
         }
 
-
-
-
-//        mHelper.createTables(db);
-
-
-//        Cursor cursor = db.query(ItemContract.ItemEntry.LISTITEM,
-//                new String[]{ItemContract.ItemEntry.LI_COL_NAME},
-//                null, null, null, null, null);
-//
-//
-//        while(cursor.moveToNext()) {
-//            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.LI_COL_NAME);
-//            Log.d(TAG, "Item: " + cursor.getString(idx));
-//        }
-
-//        cursor.close();
+        cursor.close();
+        */
         db.close();
         updateUI();
     }
@@ -144,12 +243,57 @@ public class MainActivity extends AppCompatActivity {
                                 updateUI();
                             }
                         })
-                        .setNegativeButton("Cancel", null)
+                        .setNeutralButton("Previously Indexed Items",
+                        new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                                LayoutInflater inflater = getLayoutInflater();
+                                View convertView = (View) inflater.inflate(R.layout.existing_items, null);
+                                alertDialog.setView(convertView);
+                                alertDialog.setTitle("Previous Items");
+                                ListView lv = (ListView) convertView.findViewById(R.id.lv);
+                                final ArrayList<String> itemIndexNames = new ArrayList<String>();
+                                Iterator it = itemIndexFromDB.entrySet().iterator();
+                                while (it.hasNext()) {
+                                    Map.Entry pair = (Map.Entry)it.next();
+                                    itemIndexNames.add(pair.getKey().toString());
+                                    Log.d(TAG, pair.getKey().toString());
+
+                                }
+                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1, itemIndexNames);
+                                //lv.setAdapter(adapter);
+                                alertDialog.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener()
+                                {
+                                    public void onClick(DialogInterface dialog, int position)
+                                    {
+                                        String chosen = itemIndexNames.get(position);
+                                        if(itemIndexFromDB.keySet().contains(chosen)) {
+                                            String[] vals = itemIndexFromDB.get(chosen);
+                                            Double li_Price = Double.parseDouble(vals[1]);
+                                            int li_Aisle = Integer.parseInt(vals[0]);
+                                            Log.d(TAG, "Adding: " + chosen + ", " + li_Aisle + ", " + li_Price );
+                                            ListItem li = new ListItem(chosen);
+                                            li.setI_itemAisle(li_Aisle);
+                                            li.setD_itemPrice(li_Price);
+                                            currentItemList.add(li);
+                                            updateUI();
+
+                                        }
+                                        dialog.dismiss();
+                                    }
+                                });
+                                alertDialog.show();
+                            }
+                        })
+                .setNegativeButton("Cancel", null)
                         .create();
                 dialog.show();
                 return true;
             case R.id.save_item:
                 //TODO: code to save to database
+                saveShoppingListToDB();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -157,7 +301,69 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveShoppingListToDB() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
+        //First check to see if the items in the new list are already in the database
+        for(ListItem li : currentItemList) {
+            if(itemIndexFromDB.keySet().contains(li.getS_itemName())) {
+                //TODO logic for if already in db
+                if(li.getD_itemPrice() == 0.0 && li.getI_itemAisle() == 0) {
+                    //TODO
+                    Log.d(TAG, "Item exists in db and price & aisle are 0");
+                    break;
+                } else {
+                    Log.d(TAG, "Updating price and aisle for " + li.getS_itemName());
+                    Cursor c = db.rawQuery("SELECT Name, Price, Item_ID FROM ListItem WHERE Name =  \"" + li.getS_itemName() + "\"", null);
+                    while(c.moveToNext()) {
+                        String itemID = c.getString(c.getColumnIndex("Item_ID"));
+                        String query = "UPDATE ListItem SET Aisle = " + li.getI_itemAisle() + ", Price = " + Double.toString(li.getD_itemPrice()) + " WHERE Item_ID =  \"" + itemID + "\"";
+                        db.rawQuery(query, null);
+                    }
+                    c.close();
 
+
+                }
+
+            } else {
+                ContentValues cv1 = new ContentValues();
+                cv1.put("Name", li.getS_itemName());
+                cv1.put("Aisle", li.getI_itemAisle());
+                cv1.put("Price", li.getD_itemPrice());
+                db.insert("ListItem", null, cv1);
+                Log.d("MainActivity", "Inserted: " + li.getS_itemName() + " into ListItem database");
+            }
+
+            Cursor c = db.rawQuery("SELECT Item_ID, Name FROM ListItem", null);
+            while(c.moveToNext()) {
+                String name = c.getString(c.getColumnIndex("Name"));
+                if(name.equalsIgnoreCase(li.getS_itemName())) {
+                    String itemID = c.getString(c.getColumnIndex("Item_ID"));
+                    Log.d(TAG, "Item ID in query: " + itemID);
+                    itemIDList.add(itemID);
+
+                }
+            }
+        }
+
+        Log.d(TAG, "Populating link table, array size = " + itemIDList.size());
+        for(String s : itemIDList) {
+            ContentValues cv = new ContentValues();
+            cv.put("List_ID", theShoppingList.getListID());
+            cv.put("Item_ID", s);
+            db.insert("LinkTable", null, cv);
+            Log.d(TAG, "List ID: " + theShoppingList.getListID() + " Item ID: " + s + " added to list");
+        }
+
+        String query = "SELECT Name, Aisle, Price FROM ListItem";
+        Cursor c = db.rawQuery(query, null);
+        itemIndexFromDB.clear();
+        while(c.moveToNext()) {
+            Log.d("MainActivity", "MoveToNext entered");
+            String name = c.getString(c.getColumnIndex("Name"));
+            String aisle = c.getString(c.getColumnIndex("Aisle"));
+            String price = c.getString(c.getColumnIndex("Price"));
+            String[] values = {aisle, price};
+            itemIndexFromDB.put(name, values);
+        }
+        db.close();
     }
 
     public void initComponents() {
@@ -174,8 +380,10 @@ public class MainActivity extends AppCompatActivity {
 //            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.COL_ITEM_NAME);
 //            itemList.add(cursor.getString(idx));
 //        }
+        Log.d(TAG, "Current item list size in updateUI: " + currentItemList.size());
         ArrayList<ListItem> itemList = currentItemList;
         theShoppingList.setH_shoppingList(currentItemList);
+
 
         if (mAdapter == null) {
             mAdapter = new ItemAdapter(this, itemList);

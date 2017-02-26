@@ -47,7 +47,7 @@ public class ItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("MainActivity", "getView entered");
+       // Log.d("MainActivity", "getView entered");
 
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.item_todo, parent, false);
@@ -57,7 +57,7 @@ public class ItemAdapter extends BaseAdapter {
 
         if(listItem != null) {
 
-            Log.d("MainActivity", "Item is not null");
+            //Log.d("MainActivity", "Item is not null");
             // Lookup view for data population
             TextView itemName = (TextView) convertView.findViewById(R.id.item_title);
             TextView itemAisle = (TextView) convertView.findViewById(R.id.tv_aisle_val);
@@ -69,9 +69,9 @@ public class ItemAdapter extends BaseAdapter {
             itemPrice.setText(String.valueOf(listItem.getD_itemPrice()));
 
         } else {
-            Log.d("MainActivity", "Item is null");
+            //Log.d("MainActivity", "Item is null");
         }
-        Log.d("MainActivity", "exiting getView");
+        //Log.d("MainActivity", "exiting getView");
         return convertView;
     }
 }

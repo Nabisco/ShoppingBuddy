@@ -3,7 +3,6 @@ package com.example.shoppingbuddy.shoppingbuddy;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by gme50 on 2/2/2017.
@@ -13,11 +12,12 @@ public class ShoppingList {
 
     private ArrayList<ListItem> a_shoppingList;
     private String currentDate;
+    private String listID;
 
     public ShoppingList(ArrayList<ListItem> itemList, String theDate) {
 
         this.a_shoppingList = itemList;
-        currentDate = theDate;
+        setCurrentDate(theDate);
 
         Log.d("MainActivity", "Date: " + theDate);
     }
@@ -33,5 +33,21 @@ public class ShoppingList {
 
     public void setH_shoppingList(ArrayList<ListItem> h_shoppingList) {
         this.a_shoppingList = h_shoppingList;
+    }
+
+    public String getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(String currentDate) {
+        this.currentDate = currentDate;
+    }
+
+    public String getListID() {
+        return listID;
+    }
+
+    public void setListID(String listID) {
+        this.listID = listID;
     }
 }

@@ -24,7 +24,20 @@
         android:id="@+id/newListButton"
         android:background="@color/colorAccent"
         android:layout_below="@+id/shoppingBuddyTitle"
+        android:layout_marginTop="17dp"
+        android:layout_alignStart="@+id/previousList"
+        android:layout_alignEnd="@+id/previousList"
+        android:textSize="12sp" />
+
+    <Button
+        android:text="Previous List"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/previousList"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="21dp"
+        android:layout_below="@+id/newListButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp" />
+        android:textSize="12sp" />
 
 </RelativeLayout>
