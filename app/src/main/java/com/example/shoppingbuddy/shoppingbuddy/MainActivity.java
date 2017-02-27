@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle b = getIntent().getExtras();
         int value = -1; // or other values
-        if(b != null)
+        if(b != null) {
             value = b.getInt("key");
-
+        }
         itemIDList = new ArrayList<>();
         currentItemList = new ArrayList<>();
         ArrayList<ListItem> itemList = currentItemList;
@@ -111,14 +111,11 @@ public class MainActivity extends AppCompatActivity {
         theShoppingList.setListID(date);
         cue.close();
 
-
-
-
         String query = "SELECT Name, Aisle, Price FROM ListItem LEFT JOIN LinkTable ON ListItem.Item_ID = LinkTable.Item_ID " +
                 "WHERE LinkTable.List_ID = \"" + theListID + "\"";
         Cursor cur = db.rawQuery(query, null);
         while(cur.moveToNext()) {
-            //Log.d("MainActivity", "MoveToNext entered");
+
             String name = cur.getString(cur.getColumnIndex("Name"));
             String aisle = cur.getString(cur.getColumnIndex("Aisle"));
             String price = cur.getString(cur.getColumnIndex("Price"));
@@ -206,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -300,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveShoppingListToDB() {
+
         SQLiteDatabase db = mHelper.getReadableDatabase();
         //First check to see if the items in the new list are already in the database
         for(ListItem li : currentItemList) {
@@ -318,8 +317,6 @@ public class MainActivity extends AppCompatActivity {
                         db.rawQuery(query, null);
                     }
                     c.close();
-
-
                 }
 
             } else {
@@ -338,7 +335,6 @@ public class MainActivity extends AppCompatActivity {
                     String itemID = c.getString(c.getColumnIndex("Item_ID"));
                     Log.d(TAG, "Item ID in query: " + itemID);
                     itemIDList.add(itemID);
-
                 }
             }
         }
@@ -371,31 +367,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-//        Log.d("MainActivity", "Updating");
-//        SQLiteDatabase db = mHelper.getReadableDatabase();
-//        Cursor cursor = db.query(ItemContract.ItemEntry.TABLE,
-//                new String[]{ItemContract.ItemEntry._ID, ItemContract.ItemEntry.COL_ITEM_NAME},
-//                null, null, null, null, null);
-//        while (cursor.moveToNext()) {
-//            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.COL_ITEM_NAME);
-//            itemList.add(cursor.getString(idx));
-//        }
+
         Log.d(TAG, "Current item list size in updateUI: " + currentItemList.size());
         ArrayList<ListItem> itemList = currentItemList;
         theShoppingList.setH_shoppingList(currentItemList);
-
 
         if (mAdapter == null) {
             mAdapter = new ItemAdapter(this, itemList);
             mTaskListView.setAdapter(mAdapter);
             Log.d("MainActivity", "madapter was null");
-
         } else {
             mAdapter.notifyDataSetChanged();
             Log.d("MainActivity", "UpdateUI add all executed");
         }
-//        cursor.close();
-//        db.close();
     }
 
     public void deleteItem(View view) {
@@ -414,11 +398,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-//        SQLiteDatabase db = mHelper.getWritableDatabase();
-//        db.delete(ItemContract.ItemEntry.TABLE,
-//                ItemContract.ItemEntry.COL_ITEM_NAME + " = ?",
-//                new String[]{task});
-//        db.close();
         updateUI();
     }
 
