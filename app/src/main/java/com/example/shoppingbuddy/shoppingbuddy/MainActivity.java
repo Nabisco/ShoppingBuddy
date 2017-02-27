@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         itemIndexFromDB = new HashMap<>();
         theListID = 0;
         date = "";
+
         switch(value) {
             case 0:
                 createNewList();
@@ -185,18 +186,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, pair.getKey().toString());
 
         }
-        /*
-        mHelper.createTables(db);
-        Cursor cursor = db.query(ItemContract.ItemEntry.LISTITEM,
-                new String[]{ItemContract.ItemEntry.LI_COL_NAME},
-                null, null, null, null, null);
-        while(cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(ItemContract.ItemEntry.LI_COL_NAME);
-            Log.d(TAG, "Item: " + cursor.getString(idx));
-        }
-
-        cursor.close();
-        */
         db.close();
         updateUI();
     }
@@ -210,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.action_add_task:
                 final EditText taskEditText = new EditText(this);
@@ -221,17 +211,6 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String task = String.valueOf(taskEditText.getText());
-//
-//                                SQLiteDatabase db = mHelper.getWritableDatabase();
-//                                ContentValues values = new ContentValues();
-//                                values.put(ItemContract.ItemEntry.LI_COL_NAME, task);
-//                                values.put(ItemContract.ItemEntry.LI_COL_AISLE, 0);
-//                                values.put(ItemContract.ItemEntry.LI_COL_PRICE, 0.0);
-//                                db.insertWithOnConflict(ItemContract.ItemEntry.LI_COL_NAME,
-//                                        null,
-//                                        values,
-//                                        SQLiteDatabase.CONFLICT_REPLACE);
-//                                db.close()
                                 ListItem newItem = new ListItem(task);
                                 Log.d(TAG, "Before adding new item. size: "  + currentItemList.size());
                                 currentItemList.add(newItem);
@@ -305,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
             if(itemIndexFromDB.keySet().contains(li.getS_itemName())) {
                 //TODO logic for if already in db
                 if(li.getD_itemPrice() == 0.0 && li.getI_itemAisle() == 0) {
-                    //TODO
                     Log.d(TAG, "Item exists in db and price & aisle are 0");
                     break;
                 } else {
@@ -463,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             };
-            final AlertDialog alertDialog = (new AlertDialog.Builder(this)).setMessage("Please enter name and password")
+            final AlertDialog alertDialog = (new AlertDialog.Builder(this)).setMessage("Please enter the aisle and price:")
                     .setView(linearLayout)
                     .setPositiveButton("Done", alertDialogClickListener)
                     .setNegativeButton("Cancel", alertDialogClickListener)
