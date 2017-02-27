@@ -18,7 +18,7 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shopping_buddy_menu);
-        getActionBar().setTitle("ShoppingBudy");
+        //getActionBar().setTitle("ShoppingBudy");
         createNewListButton = (Button) findViewById(R.id.newListButton);
         createNewListButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
