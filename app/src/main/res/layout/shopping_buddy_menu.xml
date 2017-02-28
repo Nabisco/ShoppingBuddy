@@ -1,43 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical">
-
-    <TextView
-        android:text="Shopping Buddy"
-        android:layout_width="match_parent"
-        android:id="@+id/shoppingBuddyTitle"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        android:textSize="36sp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="192dp"
-        android:typeface="serif"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="New List"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/newListButton"
-        android:background="@color/colorAccent"
-        android:layout_below="@+id/shoppingBuddyTitle"
-        android:layout_marginTop="17dp"
-        android:layout_alignStart="@+id/previousList"
-        android:layout_alignEnd="@+id/previousList"
-        android:textSize="12sp" />
+    android:layout_gravity="center_vertical"
+    android:background="@android:color/black">
 
     <Button
         android:text="Previous List"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/previousList"
-        android:background="@color/colorAccent"
+        android:background="@android:color/background_light"
         android:layout_marginTop="21dp"
         android:layout_below="@+id/newListButton"
         android:layout_centerHorizontal="true"
-        android:textSize="12sp" />
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:textColorHighlight="@color/darkGreen"
+        android:textColorHint="@color/darkGreen"
+        android:textColorLink="@color/darkGreen"
+        android:fontFamily="monospace" />
+
+    <Button
+        android:text="New List"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/newListButton"
+        android:background="@android:color/background_light"
+        android:layout_marginTop="19dp"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:textColorLink="@color/darkGreen"
+        android:textColorHint="@color/darkGreen"
+        android:textColorHighlight="@color/darkGreen"
+        android:fontFamily="monospace"
+        android:layout_below="@+id/shoppingBuddyTitle"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Shopping Buddy"
+        android:layout_width="match_parent"
+        android:id="@+id/shoppingBuddyTitle"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_blue_bright"
+        android:textSize="48sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="128dp"
+        android:typeface="serif"
+        android:fontFamily="casual"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
