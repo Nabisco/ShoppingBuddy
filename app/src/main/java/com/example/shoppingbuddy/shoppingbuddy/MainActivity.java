@@ -18,14 +18,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shoppingbuddy.shoppingbuddy.db.ItemDbHelper;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     HashMap<String, String[]> itemIndexFromDB;
     int theListID;
     String date;
+    double cartTotal;
+    DecimalFormat format;
 
     ShoppingList theShoppingList;
     ArrayList<String> itemIDList;
@@ -70,7 +75,17 @@ public class MainActivity extends AppCompatActivity {
         mHelper = new ItemDbHelper(this);
         itemIndexFromDB = new HashMap<>();
         theListID = 0;
+        cartTotal = 0.0;
+        format = new DecimalFormat("#.00");
         date = "";
+        mTaskListView.setLongClickable(true);
+        mTaskListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                priceAndAisleCheck(currentItemList.get(i));
+                return true;
+            }
+        });
 
         switch(value) {
             case 0:
@@ -82,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
+
+
 
     }
 
@@ -269,8 +286,11 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show();
                 return true;
             case R.id.save_item:
-                //TODO: code to save to database
                 saveShoppingListToDB();
+                return true;
+            case R.id.cart:
+                printCartTotal();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -369,14 +389,23 @@ public class MainActivity extends AppCompatActivity {
                 if(x.getI_itemAisle() == 0 && x.getD_itemPrice() == 0.0) {
                     priceAndAisleCheck(x);
                     Log.d("MainActivity", x.getS_itemName() + " Aisle: " + x.getI_itemAisle());
+
                 } else {
+                    cartTotal += x.getD_itemPrice();
+                    Log.d(TAG,"Cart total: " + cartTotal);
+                    printCartTotal();
                     currentItemList.remove(x);
                     updateUI();
                 }
                 break;
             }
         }
+
         updateUI();
+    }
+
+    private void printCartTotal() {
+        Toast.makeText(getApplicationContext(), "Cart Total: $" + format.format(cartTotal), Toast.LENGTH_LONG).show();
     }
 
     public ListItem priceAndAisleCheck(ListItem itemToChange) {
