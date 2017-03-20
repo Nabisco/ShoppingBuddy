@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
-    android:background="@android:color/black"
+    android:background="@android:color/background_light"
     android:longClickable="true">
 
     <TextView
@@ -14,7 +14,7 @@
         android:layout_alignParentStart="true"
         android:text="Hello"
         android:textSize="20sp"
-        android:textColor="@android:color/holo_blue_bright" />
+        android:textColor="@android:color/black" />
 
     <Button
         android:id="@+id/item_delete"
@@ -22,10 +22,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Item Grabbed"
+        android:text=" Item Grabbed "
         android:onClick="deleteItem"
         android:textColor="@android:color/black"
-        android:background="@android:color/holo_blue_bright" />
+        android:background="@android:color/holo_blue_dark"
+        style="@style/Widget.AppCompat.Button" />
 
     <TextView
         android:text="Aisle  "
@@ -34,7 +35,7 @@
         android:layout_below="@+id/item_title"
         android:layout_alignParentStart="true"
         android:id="@+id/tv_aisle_label"
-        android:textColor="@android:color/background_light" />
+        android:textColor="@android:color/black" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,7 +44,7 @@
         android:layout_toEndOf="@+id/tv_aisle_label"
         android:id="@+id/tv_aisle_val"
         android:paddingEnd="25dp"
-        android:textColor="@android:color/background_light" />
+        android:textColor="@android:color/black" />
 
     <TextView
         android:text="$  "
@@ -53,7 +54,7 @@
         android:layout_alignBaseline="@+id/tv_aisle_val"
         android:layout_alignBottom="@+id/tv_aisle_val"
         android:layout_toEndOf="@+id/tv_aisle_val"
-        android:textColor="@android:color/background_light" />
+        android:textColor="@android:color/black" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -62,7 +63,7 @@
         android:layout_toEndOf="@+id/tv_price_label"
         android:id="@+id/tv_price_val"
         android:paddingEnd="25dp"
-        android:textColor="@android:color/background_light" />
+        android:textColor="@android:color/black" />
 
 
 </RelativeLayout>

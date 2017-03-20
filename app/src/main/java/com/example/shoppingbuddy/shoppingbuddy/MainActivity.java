@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     ShoppingList theShoppingList;
     ArrayList<String> itemIDList;
 
+    int listTypeEnum;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         switch(value) {
             case 0:
                 createNewList();
@@ -97,14 +100,15 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
-
-
+        listTypeEnum = value;
+        Log.d(TAG, "List enum: " + listTypeEnum);
 
     }
 
     private void displayPreviousList() {
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
+
         String listID = "";
 
         String maxQuery = "SELECT List_ID FROM ShoppingList";
@@ -143,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
             currentItemList.add(li);
         }
         cur.close();
+
 
         Log.d(TAG, "Current item list size: " + currentItemList.size());
 
@@ -300,11 +305,15 @@ public class MainActivity extends AppCompatActivity {
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
         //First check to see if the items in the new list are already in the database
+//        if(listTypeEnum == 1) {
+//            Log.d(TAG, "Delete entered");
+//            String removequery = "DELETE FROM LinkTable " +
+//                    "WHERE List_ID in(" + theListID + ")";
+//            db.execSQL(removequery);
+//        }
         for(ListItem li : currentItemList) {
             if(itemIndexFromDB.keySet().contains(li.getS_itemName())) {
-                //TODO logic for if already in db
                 if(li.getD_itemPrice() == 0.0 && li.getI_itemAisle() == 0) {
-                    Log.d(TAG, "Item exists in db and price & aisle are 0");
                     break;
                 } else {
                     Log.d(TAG, "Updating price and aisle for " + li.getS_itemName());
@@ -358,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
             itemIndexFromDB.put(name, values);
         }
         db.close();
+        Toast.makeText(getApplicationContext(), "List Saved", Toast.LENGTH_LONG).show();
     }
 
     public void initComponents() {
