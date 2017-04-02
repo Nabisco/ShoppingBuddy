@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new ItemAdapter(this, itemList);
         mTaskListView.setAdapter(mAdapter);
         mHelper = new ItemDbHelper(this);
+        //mHelper.createTables();
         itemIndexFromDB = new HashMap<>();
         theListID = 0;
         cartTotal = 0.0;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 createNewList();
                 break;
             case 1:
+                theListID = Integer.parseInt(b.getString("ID"));
                 displayPreviousList();
                 break;
             default:
@@ -111,22 +113,22 @@ public class MainActivity extends AppCompatActivity {
 
         String listID = "";
 
-        String maxQuery = "SELECT List_ID FROM ShoppingList";
-        Cursor cursor = db.rawQuery(maxQuery, null);
-        while (cursor.moveToNext()) {
-            listID = cursor.getString(cursor.getColumnIndex("List_ID"));
-            if(Integer.parseInt(listID) >= theListID) {
-                theListID = Integer.parseInt(listID);
-                Log.d(TAG, "Shopping List ID: " + listID);
-            }
-        }
-        Log.d(TAG, "Shopping List ID: " + listID);
-        cursor.close();
+//        String maxQuery = "SELECT List_ID FROM ShoppingList";
+//        Cursor cursor = db.rawQuery(maxQuery, null);
+//        while (cursor.moveToNext()) {
+//            listID = cursor.getString(cursor.getColumnIndex("List_ID"));
+//            if(Integer.parseInt(listID) >= theListID) {
+//                theListID = Integer.parseInt(listID);
+//                Log.d(TAG, "Shopping List ID: " + listID);
+//            }
+//        }
+//        Log.d(TAG, "Shopping List ID: " + listID);
+//        cursor.close();
 
         String dateQuery = "SELECT Date FROM ShoppingList WHERE List_ID = \"" + theListID + "\"";
         Cursor cue = db.rawQuery(dateQuery, null);
-        while (cursor.moveToNext()) {
-            String theDate = cue.getString(cursor.getColumnIndex("Date"));
+        while (cue.moveToNext()) {
+            String theDate = cue.getString(cue.getColumnIndex("Date"));
             date = theDate;
         }
         theShoppingList = new ShoppingList(currentItemList, date);
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         query = "SELECT Name, Aisle, Price FROM ListItem";
         Cursor c = db.rawQuery(query, null);
         while(c.moveToNext()) {
-            Log.d("MainActivity", "MoveToNext entered");
+            //Log.d("MainActivity", "MoveToNext entered");
             String name = c.getString(c.getColumnIndex("Name"));
             String aisle = c.getString(c.getColumnIndex("Aisle"));
             String price = c.getString(c.getColumnIndex("Price"));
@@ -195,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         query = "SELECT Name, Aisle, Price FROM ListItem";
         Cursor c = db.rawQuery(query, null);
         while(c.moveToNext()) {
-            Log.d("MainActivity", "MoveToNext entered");
+            //Log.d("MainActivity", "MoveToNext entered");
             String name = c.getString(c.getColumnIndex("Name"));
             String aisle = c.getString(c.getColumnIndex("Aisle"));
             String price = c.getString(c.getColumnIndex("Price"));
@@ -262,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 }
                                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1, itemIndexNames);
-                                //lv.setAdapter(adapter);
                                 alertDialog.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener()
                                 {
                                     public void onClick(DialogInterface dialog, int position)
@@ -359,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         Cursor c = db.rawQuery(query, null);
         itemIndexFromDB.clear();
         while(c.moveToNext()) {
-            Log.d("MainActivity", "MoveToNext entered");
+            //Log.d("MainActivity", "MoveToNext entered");
             String name = c.getString(c.getColumnIndex("Name"));
             String aisle = c.getString(c.getColumnIndex("Aisle"));
             String price = c.getString(c.getColumnIndex("Price"));
