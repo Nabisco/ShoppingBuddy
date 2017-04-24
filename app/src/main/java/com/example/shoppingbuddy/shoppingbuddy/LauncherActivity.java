@@ -81,12 +81,6 @@ public class LauncherActivity extends AppCompatActivity {
         previousListButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 choseFromPreviousLists();
-//                Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
-//                Bundle b = new Bundle();
-//                b.putInt("key", 1);
-//                intent.putExtras(b);
-//                startActivity(intent);
-//                finish();
             }
         });
 
@@ -96,7 +90,6 @@ public class LauncherActivity extends AppCompatActivity {
         if(!previousLists.isEmpty()) {
             Log.d(TAG, "List is not empty");
         }
-
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(LauncherActivity.this);
                 LayoutInflater inflater = getLayoutInflater();
                 View convertView = (View) inflater.inflate(R.layout.existing_items, null);
@@ -108,9 +101,8 @@ public class LauncherActivity extends AppCompatActivity {
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     itemIndexNames.add(pair.getKey().toString());
-                    //Log.d(TAG, pair.getKey().toString());
-
                 }
+
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(LauncherActivity.this, android.R.layout.simple_list_item_1, itemIndexNames);
                 alertDialog.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int position) {
@@ -139,8 +131,3 @@ public class LauncherActivity extends AppCompatActivity {
         finish();
     }
 }
-
-
-
-//    Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
-//    startActivity(intent);

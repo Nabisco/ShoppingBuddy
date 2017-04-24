@@ -25,9 +25,7 @@ public class ItemAdapter extends BaseAdapter {
     public ItemAdapter(Context c, ArrayList<ListItem> itemList) {
         this.theList =  itemList;
         mInflater = LayoutInflater.from(c);
-
         Log.d("MainActivity", "Custom adapter created");
-
     }
 
     @Override
@@ -57,7 +55,6 @@ public class ItemAdapter extends BaseAdapter {
 
         if(listItem != null) {
 
-            //Log.d("MainActivity", "Item is not null");
             // Lookup view for data population
             TextView itemName = (TextView) convertView.findViewById(R.id.item_title);
             TextView itemAisle = (TextView) convertView.findViewById(R.id.tv_aisle_val);
@@ -69,9 +66,8 @@ public class ItemAdapter extends BaseAdapter {
             itemPrice.setText(String.valueOf(listItem.getD_itemPrice()));
 
         } else {
-            //Log.d("MainActivity", "Item is null");
+
         }
-        //Log.d("MainActivity", "exiting getView");
         return convertView;
     }
 }

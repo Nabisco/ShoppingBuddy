@@ -110,20 +110,7 @@ public class MainActivity extends AppCompatActivity {
     private void displayPreviousList() {
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
-
         String listID = "";
-
-//        String maxQuery = "SELECT List_ID FROM ShoppingList";
-//        Cursor cursor = db.rawQuery(maxQuery, null);
-//        while (cursor.moveToNext()) {
-//            listID = cursor.getString(cursor.getColumnIndex("List_ID"));
-//            if(Integer.parseInt(listID) >= theListID) {
-//                theListID = Integer.parseInt(listID);
-//                Log.d(TAG, "Shopping List ID: " + listID);
-//            }
-//        }
-//        Log.d(TAG, "Shopping List ID: " + listID);
-//        cursor.close();
 
         String dateQuery = "SELECT Date FROM ShoppingList WHERE List_ID = \"" + theListID + "\"";
         Cursor cue = db.rawQuery(dateQuery, null);
@@ -157,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         query = "SELECT Name, Aisle, Price FROM ListItem";
         Cursor c = db.rawQuery(query, null);
         while(c.moveToNext()) {
-            //Log.d("MainActivity", "MoveToNext entered");
             String name = c.getString(c.getColumnIndex("Name"));
             String aisle = c.getString(c.getColumnIndex("Aisle"));
             String price = c.getString(c.getColumnIndex("Price"));
@@ -174,16 +160,10 @@ public class MainActivity extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = df.format(cal.getTime());
-
         theShoppingList = new ShoppingList(currentItemList, formattedDate);
-
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        //mHelper.createTables(db);
-
         ContentValues cv1 = new ContentValues();
-
         cv1.put("Date", theShoppingList.getCurrentDate());
-
         db.insert("ShoppingList", null, cv1);
         String query = "SELECT List_ID FROM ShoppingList WHERE Date = \"" + theShoppingList.getCurrentDate() + "\"";
         Cursor cursor = db.rawQuery(query, null);
@@ -193,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Shopping List ID: " + listID);
         }
         cursor.close();
-
         query = "SELECT Name, Aisle, Price FROM ListItem";
         Cursor c = db.rawQuery(query, null);
         while(c.moveToNext()) {
@@ -239,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "Before adding new item. size: "  + currentItemList.size());
                                 currentItemList.add(newItem);
                                 Log.d(TAG, "added task to list. Size is now: " + currentItemList.size());
-                                //Log.d(TAG, "Task to add: " + task);
 
                                 updateUI();
                             }
@@ -525,5 +503,3 @@ public class MainActivity extends AppCompatActivity {
             return updatedItem;
         }
     }
-
-
