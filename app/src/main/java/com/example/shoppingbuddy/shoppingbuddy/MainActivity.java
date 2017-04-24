@@ -305,13 +305,6 @@ public class MainActivity extends AppCompatActivity {
     private void saveShoppingListToDB() {
 
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        //First check to see if the items in the new list are already in the database
-//        if(listTypeEnum == 1) {
-//            Log.d(TAG, "Delete entered");
-//            String removequery = "DELETE FROM LinkTable " +
-//                    "WHERE List_ID in(" + theListID + ")";
-//            db.execSQL(removequery);
-//        }
         for(ListItem li : currentItemList) {
             if(itemIndexFromDB.keySet().contains(li.getS_itemName())) {
                 if(li.getD_itemPrice() == 0.0 && li.getI_itemAisle() == 0) {
@@ -369,6 +362,31 @@ public class MainActivity extends AppCompatActivity {
         }
         db.close();
         Toast.makeText(getApplicationContext(), "List Saved", Toast.LENGTH_LONG).show();
+    }
+
+    public void setNameOnSave() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Title");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                theShoppingList.setListName(input.getText().toString());
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     public void initComponents() {

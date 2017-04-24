@@ -13,10 +13,12 @@ public class ShoppingList {
     private ArrayList<ListItem> a_shoppingList;
     private String currentDate;
     private String listID;
+    private String listName;
 
     public ShoppingList(ArrayList<ListItem> itemList, String theDate) {
 
         this.a_shoppingList = itemList;
+        this.setListName("");
         setCurrentDate(theDate);
 
         Log.d("MainActivity", "Date: " + theDate);
@@ -49,5 +51,13 @@ public class ShoppingList {
 
     public void setListID(String listID) {
         this.listID = listID;
+    }
+
+    public String getListName() {
+        return listName;
+    }
+
+    public void setListName(String listName) {
+        this.listName = listName;
     }
 }

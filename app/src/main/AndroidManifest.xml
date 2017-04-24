@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LauncherActivity"
-            android:label="@string/title_activity_launcher">
+            android:label="ShoppingBuddy">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
